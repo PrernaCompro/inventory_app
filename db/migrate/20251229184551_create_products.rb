@@ -13,5 +13,12 @@ class CreateProducts < ActiveRecord::Migration[7.2]
     end
 
     add_index :products, :sku, unique: true
+    add_index :products, :name
+    add_index :products, :active
+    add_index :products, [:active, :name]
+    add_index :products, :price
+    add_index :products, :quantity
+    add_index :products, :created_at
+    add_index :products, :updated_at
   end
 end

@@ -3,6 +3,14 @@ class SuppliersController < ApplicationController
 
   def index
     @suppliers = Supplier.all
+    @suppliers = Supplier.active.alphabetical
+    @suppliers = Supplier.active.search(params[:query]).alphabetical
+    @suppliers = Supplier.active.alphabetical.with_products if params[:with_products]
+    @suppliers = @suppliers.alphabetical.page(params[:page]).per(25)
+  end
+
+  def dashboard
+    @recent_suppliers = Supplier.recent.limit(5)
   end
 
   def show
@@ -34,8 +42,17 @@ class SuppliersController < ApplicationController
   end
 
   def destroy
-    @supplier.destroy
-    redirect_to suppliers_path, notice: "Supplier deleted successfully."
+    if @supplier.soft_delete
+      redirect_to suppliers_path, notice: "Supplier deactivated successfully."
+    else
+      redirect_to suppliers_path, alert: "Failed to deactivate supplier: #{@supplier.errors.full_messages.join(', ')}"
+    end
+  end
+
+  def reactivate
+    @supplier = Supplier.find(params[:id])
+    @supplier.reactivate
+    redirect_to suppliers_path, notice: "Supplier was reactivated."
   end
 
   private

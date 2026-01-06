@@ -10,6 +10,10 @@ class CreateSuppliers < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    add_index :suppliers, :email
+    add_index :suppliers, :email, unique: true
+    add_index :suppliers, :name
+    add_index :suppliers, :active
+    add_index :suppliers, [:active, :name]
+    add_index :suppliers, :phone
   end
 end
